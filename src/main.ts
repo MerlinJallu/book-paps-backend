@@ -9,6 +9,6 @@ async function bootstrap() {
     origin: ['http://localhost:8080', 'https://book-paps.netlify.app'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   });
-  await app.listen(3000);
+  await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
