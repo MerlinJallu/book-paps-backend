@@ -24,6 +24,11 @@ export class BooksService {
   }
   async create(createBookDto: CreateBookDto): Promise<BookDto> {
     try {
+      for (const key in createBookDto) {
+        if (createBookDto[key] === null || createBookDto[key] === '') {
+            delete createBookDto[key];
+        }
+      }
       const createdBook = new this.bookModel({
         ...createBookDto,
       });
@@ -59,6 +64,11 @@ export class BooksService {
   }
 
   async update(id: string, bookDto: BookDto): Promise<BookDto> {
+    for (const key in bookDto) {
+      if (bookDto[key] === null || bookDto[key] === '') {
+          delete bookDto[key];
+      }
+    }
     const updatedBook = await this.bookModel.findByIdAndUpdate(id, bookDto, {
       new: true,
     });
