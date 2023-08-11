@@ -23,20 +23,25 @@ export class BooksService {
     }));
   }
   async create(createBookDto: CreateBookDto): Promise<BookDto> {
-    const createdBook = new this.bookModel({
-      ...createBookDto,
-    });
-    const savedBook = await createdBook.save();
-    return {
-      id: savedBook._id.toString(),
-      title: savedBook.title,
-      description: savedBook.description,
-      category: savedBook.category,
-      date: savedBook.date,
-      author: savedBook.author,
-      edition: savedBook.edition,
-      price: savedBook.price,
-    };
+    try {
+      const createdBook = new this.bookModel({
+        ...createBookDto,
+      });
+      const savedBook = await createdBook.save();
+      return {
+        id: savedBook._id.toString(),
+        title: savedBook.title,
+        description: savedBook.description,
+        category: savedBook.category,
+        date: savedBook.date,
+        author: savedBook.author,
+        edition: savedBook.edition,
+        price: savedBook.price,
+      };
+    } catch (error) {
+      console.error("Erreur lors de la création du livre:", error);
+      throw error;
+    }
   }
 
   async delete(id: string): Promise<BookDto> {
