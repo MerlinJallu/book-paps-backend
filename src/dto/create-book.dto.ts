@@ -1,24 +1,24 @@
-import { IsString, IsInt } from 'class-validator';
+import { IsString, IsInt, IsOptional } from 'class-validator';
 
 export class CreateBookDto {
   @IsString()
   title: string;
 
-  @IsString()
-  description: string;
+  @IsOptional() @IsString()
+  description?: string;
 
-  @IsString()
-  category: string;
+  @IsOptional() @IsString()
+  category?: string;
 
-  @IsInt()
-  date: number;
+  @IsOptional() @IsInt()
+  date?: number;
 
-  @IsString()
-  author: string;
+  @IsOptional() @IsString()
+  author?: string;
 
-  @IsString()
-  edition: string;
+  @IsOptional() @IsString()
+  edition?: string;
 
-  @IsString()
-  price: string;
+  @IsOptional() @IsString()
+  price?: string;
 }
