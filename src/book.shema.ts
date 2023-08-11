@@ -11,19 +11,19 @@ export class Book {
   @Prop()
   description: string;
 
-  @Prop({ required: true })
+  @Prop()
   category: string;
 
-  @Prop({ required: true })
+  @Prop()
   date: number;
 
-  @Prop({ required: true })
+  @Prop()
   author: string;
 
-  @Prop({ required: true })
+  @Prop()
   edition: string;
 
-  @Prop({ required: true })
+  @Prop()
   price: string;
 }
 
