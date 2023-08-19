@@ -19,6 +19,6 @@ export class CreateBookDto {
   @IsOptional() @IsString()
   edition?: string;
 
-  @IsOptional() @IsString()
-  price?: string;
+  @IsOptional() @IsInt()
+  price?: number;
 }
