@@ -7,4 +7,5 @@ export class BookDto {
   author: string;
   edition: string;
   price: number;
+  imageUrl?: string;
 }

@@ -4,10 +4,14 @@ import { Model } from 'mongoose';
 import { Book, BookDocument } from '../book.shema';
 import { CreateBookDto } from '../dto/create-book.dto';
 import { BookDto } from '../dto/book.dto';
+import { CloudinaryService } from './cloudinary.service';
 
 @Injectable()
 export class BooksService {
-  constructor(@InjectModel(Book.name) private bookModel: Model<BookDocument>) {}
+  constructor(
+    @InjectModel(Book.name) private bookModel: Model<BookDocument>,
+    private cloudinaryService: CloudinaryService
+  ) {}
 
   async findAll(): Promise<BookDto[]> {
     const books = await this.bookModel.find().exec();
@@ -20,6 +24,7 @@ export class BooksService {
       author: book.author,
       edition: book.edition,
       price: book.price,
+      imageUrl: book.imageUrl,
     }));
   }
   async create(createBookDto: CreateBookDto): Promise<BookDto> {
@@ -37,6 +42,7 @@ export class BooksService {
         author: savedBook.author,
         edition: savedBook.edition,
         price: savedBook.price,
+        imageUrl: savedBook.imageUrl,
       };
     } catch (error) {
       console.error("Erreur lors de la création du livre:", error);
@@ -55,6 +61,7 @@ export class BooksService {
       author: deletedBook.author,
       edition: deletedBook.edition,
       price: deletedBook.price,
+      imageUrl: deletedBook.imageUrl,
     };
   }
 
@@ -71,6 +78,27 @@ export class BooksService {
       author: updatedBook.author,
       edition: updatedBook.edition,
       price: updatedBook.price,
+      imageUrl: updatedBook.imageUrl,
+    };
+  }
+
+  async uploadImage(bookId: string, file: Express.Multer.File): Promise<BookDto> {
+    const result = await this.cloudinaryService.uploadImage(file);
+    const book = await this.bookModel.findByIdAndUpdate(bookId, { imageUrl: result.url }, { new: true }).exec();
+    return this.toBookDto(book);
+  }
+
+  private toBookDto(book: BookDocument): BookDto {
+    return {
+      id: book._id.toString(),
+      title: book.title,
+      description: book.description,
+      category: book.category,
+      date: book.date,
+      author: book.author,
+      edition: book.edition,
+      price: book.price,
+      imageUrl: book.imageUrl,
     };
   }
 }
