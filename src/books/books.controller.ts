@@ -16,6 +16,7 @@ import { IBook } from '../book.interface';
 import { BookDto } from '../dto/book.dto';
 import { CloudinaryService } from './cloudinary.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 @Controller('books')
 export class BooksController {
@@ -48,13 +49,22 @@ export class BooksController {
   }
 
   @Post(':id/upload-image')
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(FileInterceptor('image', {
+    storage: diskStorage({
+      destination: './uploads', // Assurez-vous que ce répertoire existe
+      filename: (req, file, callback) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const extension = file.mimetype.split('/')[1];
+        callback(null, `image-${uniqueSuffix}.${extension}`);
+      },
+    }),
+  }))
   async uploadImage(
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
+    @Req() req,
   ): Promise<BookDto> {
-    const result = await this.cloudinaryService.uploadImage(file); // Utilise CloudinaryService pour uploader l'image
-    const imageUrl = result.url; // Obtient l'URL de l'image depuis le résultat
+    const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${file.filename}`;
     return this.booksService.update(id, { imageUrl }); // Met à jour le livre avec la nouvelle URL de l'image
   }
 }
