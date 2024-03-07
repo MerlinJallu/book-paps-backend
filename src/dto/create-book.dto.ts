@@ -21,4 +21,7 @@ export class CreateBookDto {
 
   @IsOptional() @IsNumber()
   price?: number;
+
+  @IsOptional() @IsString()
+  imageUrl?: string;
 }

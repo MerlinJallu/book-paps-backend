@@ -20,6 +20,7 @@ export class BooksService {
       author: book.author,
       edition: book.edition,
       price: book.price,
+      imageUrl: book.imageUrl,
     }));
   }
   async create(createBookDto: CreateBookDto): Promise<BookDto> {
@@ -37,6 +38,7 @@ export class BooksService {
         author: savedBook.author,
         edition: savedBook.edition,
         price: savedBook.price,
+        imageUrl: savedBook.imageUrl,
       };
     } catch (error) {
       console.error("Erreur lors de la création du livre:", error);
@@ -55,22 +57,28 @@ export class BooksService {
       author: deletedBook.author,
       edition: deletedBook.edition,
       price: deletedBook.price,
+      imageUrl: deletedBook.imageUrl,
     };
   }
 
-  async update(id: string, bookDto: BookDto): Promise<BookDto> {
+  async update(id: string, bookDto: Partial<BookDto>): Promise<BookDto> {
     const updatedBook = await this.bookModel.findByIdAndUpdate(id, bookDto, {
       new: true,
     });
+    return this.toBookDto(updatedBook);
+  }
+  
+  private toBookDto(book: BookDocument): BookDto {
     return {
-      id: updatedBook._id.toString(),
-      title: updatedBook.title,
-      description: updatedBook.description,
-      category: updatedBook.category,
-      date: updatedBook.date,
-      author: updatedBook.author,
-      edition: updatedBook.edition,
-      price: updatedBook.price,
+      id: book._id.toString(),
+      title: book.title,
+      description: book.description,
+      category: book.category,
+      date: book.date,
+      author: book.author,
+      edition: book.edition,
+      price: book.price,
+      imageUrl: book.imageUrl,
     };
   }
 }

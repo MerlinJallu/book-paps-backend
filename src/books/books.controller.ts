@@ -8,15 +8,21 @@ import {
   Put,
   UseInterceptors,
   UploadedFile,
+  Req,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from '../dto/create-book.dto';
 import { IBook } from '../book.interface';
 import { BookDto } from '../dto/book.dto';
+import { CloudinaryService } from './cloudinary.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('books')
 export class BooksController {
-  constructor(private readonly booksService: BooksService) {}
+  constructor(
+    private readonly booksService: BooksService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   @Get()
   findAll(): Promise<BookDto[]> {
@@ -39,5 +45,16 @@ export class BooksController {
     @Body() bookDto: BookDto,
   ): Promise<BookDto> {
     return this.booksService.update(id, bookDto);
+  }
+
+  @Post(':id/upload-image')
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadImage(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<BookDto> {
+    const result = await this.cloudinaryService.uploadImage(file); // Utilise CloudinaryService pour uploader l'image
+    const bookUpdateData: Partial<BookDto> = { imageUrl: result.url }; // Crée un objet partiel avec l'URL de l'image
+    return this.booksService.update(id, bookUpdateData); // Met à jour le livre avec la nouvelle URL de l'image
   }
 }
