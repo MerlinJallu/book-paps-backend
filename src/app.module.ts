@@ -10,10 +10,10 @@ import { join } from 'path';
   imports: [
     MongooseModule.forRoot(process.env.MONGODB_URI),
     BooksModule,
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'uploads'),
-      serveRoot: '/uploads/',
-    }),
+    // ServeStaticModule.forRoot({
+    //   rootPath: join(__dirname, '..', 'uploads'),
+    //   serveRoot: '/uploads/',
+    // }),
   ],
   controllers: [AppController],
   providers: [AppService],
