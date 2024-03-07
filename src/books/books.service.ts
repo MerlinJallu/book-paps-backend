@@ -20,7 +20,7 @@ export class BooksService {
       author: book.author,
       edition: book.edition,
       price: book.price,
-      //imageUrl: book.imageUrl,
+      imageUrl: book.imageUrl,
     }));
   }
   async create(createBookDto: CreateBookDto): Promise<BookDto> {
@@ -38,7 +38,7 @@ export class BooksService {
         author: savedBook.author,
         edition: savedBook.edition,
         price: savedBook.price,
-        //imageUrl: savedBook.imageUrl,
+        imageUrl: savedBook.imageUrl,
       };
     } catch (error) {
       console.error("Erreur lors de la création du livre:", error);
@@ -57,7 +57,7 @@ export class BooksService {
       author: deletedBook.author,
       edition: deletedBook.edition,
       price: deletedBook.price,
-      //imageUrl: deletedBook.imageUrl,
+      imageUrl: deletedBook.imageUrl,
     };
   }
 
@@ -74,23 +74,23 @@ export class BooksService {
       author: updatedBook.author,
       edition: updatedBook.edition,
       price: updatedBook.price,
-      //imageUrl: updatedBook.imageUrl,
+      imageUrl: updatedBook.imageUrl,
     };
   }
 
-  // async updateImageUrl(bookId: string, imageUrl: string): Promise<BookDto> {
-  //   const book = await this.bookModel.findByIdAndUpdate(bookId, { imageUrl }, { new: true });
-  //   return {
-  //     id: book._id.toString(),
-  //     title: book.title,
-  //     description: book.description,
-  //     category: book.category,
-  //     date: book.date,
-  //     author: book.author,
-  //     edition: book.edition,
-  //     price: book.price,
-  //     imageUrl: book.imageUrl,
-  //   };
-  // }
+  async updateImageUrl(bookId: string, imageUrl: string): Promise<BookDto> {
+    const book = await this.bookModel.findByIdAndUpdate(bookId, { imageUrl }, { new: true });
+    return {
+      id: book._id.toString(),
+      title: book.title,
+      description: book.description,
+      category: book.category,
+      date: book.date,
+      author: book.author,
+      edition: book.edition,
+      price: book.price,
+      imageUrl: book.imageUrl,
+    };
+  }
   
 }
