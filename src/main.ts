@@ -1,13 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import * as express from 'express';
-import { ExpressAdapter } from '@nestjs/platform-express';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const server = express();
-  const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
-  app.use('/uploads', express.static('uploads'));
-  
-  await app.listen(3000);
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe());
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  });
+  await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
