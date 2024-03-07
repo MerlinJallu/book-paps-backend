@@ -54,7 +54,7 @@ export class BooksController {
     @UploadedFile() file: Express.Multer.File,
   ): Promise<BookDto> {
     const result = await this.cloudinaryService.uploadImage(file); // Utilise CloudinaryService pour uploader l'image
-    const bookUpdateData: Partial<BookDto> = { imageUrl: result.url }; // Crée un objet partiel avec l'URL de l'image
-    return this.booksService.update(id, bookUpdateData); // Met à jour le livre avec la nouvelle URL de l'image
+    const imageUrl = result.url; // Obtient l'URL de l'image depuis le résultat
+    return this.booksService.update(id, { imageUrl }); // Met à jour le livre avec la nouvelle URL de l'image
   }
 }
