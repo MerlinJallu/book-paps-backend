@@ -61,14 +61,25 @@ export class BooksService {
     };
   }
 
-  async update(id: string, bookDto: Partial<BookDto>): Promise<BookDto> {
+  async update(id: string, bookDto: BookDto): Promise<BookDto> {
     const updatedBook = await this.bookModel.findByIdAndUpdate(id, bookDto, {
       new: true,
     });
-    return this.toBookDto(updatedBook);
+    return {
+      id: updatedBook._id.toString(),
+      title: updatedBook.title,
+      description: updatedBook.description,
+      category: updatedBook.category,
+      date: updatedBook.date,
+      author: updatedBook.author,
+      edition: updatedBook.edition,
+      price: updatedBook.price,
+      imageUrl: updatedBook.imageUrl,
+    };
   }
-  
-  private toBookDto(book: BookDocument): BookDto {
+
+  async updateImageUrl(bookId: string, imageUrl: string): Promise<BookDto> {
+    const book = await this.bookModel.findByIdAndUpdate(bookId, { imageUrl }, { new: true });
     return {
       id: book._id.toString(),
       title: book.title,
@@ -81,4 +92,5 @@ export class BooksService {
       imageUrl: book.imageUrl,
     };
   }
+  
 }

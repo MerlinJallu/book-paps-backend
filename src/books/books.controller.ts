@@ -49,22 +49,14 @@ export class BooksController {
   }
 
   @Post(':id/upload-image')
-  @UseInterceptors(FileInterceptor('image', {
-    storage: diskStorage({
-      destination: './uploads', // Assurez-vous que ce répertoire existe
-      filename: (req, file, callback) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const extension = file.mimetype.split('/')[1];
-        callback(null, `image-${uniqueSuffix}.${extension}`);
-      },
-    }),
-  }))
-  async uploadImage(
-    @Param('id') id: string,
-    @UploadedFile() file: Express.Multer.File,
-    @Req() req,
-  ): Promise<BookDto> {
-    const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${file.filename}`;
-    return this.booksService.update(id, { imageUrl }); // Met à jour le livre avec la nouvelle URL de l'image
-  }
+    @UseInterceptors(FileInterceptor('image'))
+    async uploadImage(
+      @Param('id') id: string,
+      @UploadedFile() file: Express.Multer.File,
+      @Req() req,
+    ): Promise<BookDto> {
+      const imageUrl = 'Votre logique pour obtenir l\'URL de l\'image';
+      return this.booksService.updateImageUrl(id, imageUrl);
+    }
+
 }
