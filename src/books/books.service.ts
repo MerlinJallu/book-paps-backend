@@ -78,19 +78,19 @@ export class BooksService {
     };
   }
 
-  async updateImageUrl(bookId: string, imageUrl: string): Promise<BookDto> {
-    const book = await this.bookModel.findByIdAndUpdate(bookId, { imageUrl }, { new: true });
-    return {
-      id: book._id.toString(),
-      title: book.title,
-      description: book.description,
-      category: book.category,
-      date: book.date,
-      author: book.author,
-      edition: book.edition,
-      price: book.price,
-      imageUrl: book.imageUrl,
-    };
-  }
+  // async updateImageUrl(bookId: string, imageUrl: string): Promise<BookDto> {
+  //   const book = await this.bookModel.findByIdAndUpdate(bookId, { imageUrl }, { new: true });
+  //   return {
+  //     id: book._id.toString(),
+  //     title: book.title,
+  //     description: book.description,
+  //     category: book.category,
+  //     date: book.date,
+  //     author: book.author,
+  //     edition: book.edition,
+  //     price: book.price,
+  //     imageUrl: book.imageUrl,
+  //   };
+  // }
   
 }

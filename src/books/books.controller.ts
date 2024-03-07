@@ -48,15 +48,15 @@ export class BooksController {
     return this.booksService.update(id, bookDto);
   }
 
-  @Post(':id/upload-image')
-    @UseInterceptors(FileInterceptor('image'))
-    async uploadImage(
-      @Param('id') id: string,
-      @UploadedFile() file: Express.Multer.File,
-      @Req() req,
-    ): Promise<BookDto> {
-      const imageUrl = 'Votre logique pour obtenir l\'URL de l\'image';
-      return this.booksService.updateImageUrl(id, imageUrl);
-    }
+  // @Post(':id/upload-image')
+  //   @UseInterceptors(FileInterceptor('image'))
+  //   async uploadImage(
+  //     @Param('id') id: string,
+  //     @UploadedFile() file: Express.Multer.File,
+  //     @Req() req,
+  //   ): Promise<BookDto> {
+  //     const imageUrl = 'Votre logique pour obtenir l\'URL de l\'image';
+  //     return this.booksService.updateImageUrl(id, imageUrl);
+  //   }
 
 }
