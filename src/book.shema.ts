@@ -25,9 +25,6 @@ export class Book {
 
   @Prop()
   price: number;
-
-  @Prop()
-  imageUrl: string;
 }
 
 export const BookSchema = SchemaFactory.createForClass(Book);
