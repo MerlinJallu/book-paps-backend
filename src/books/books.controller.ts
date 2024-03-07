@@ -22,7 +22,7 @@ import { diskStorage } from 'multer';
 export class BooksController {
   constructor(
     private readonly booksService: BooksService,
-    private readonly cloudinaryService: CloudinaryService,
+    // private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   @Get()
