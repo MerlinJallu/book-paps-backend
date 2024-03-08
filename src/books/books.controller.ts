@@ -42,6 +42,14 @@ export class BooksController {
   }
 
   @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() bookDto: BookDto,
+  ): Promise<BookDto> {
+    return this.booksService.update(id, bookDto);
+  }
+
+  @Post(':id/upload-image')
   @UseInterceptors(FileInterceptor('image', {
     storage: diskStorage({
       destination: './uploads',
@@ -51,21 +59,9 @@ export class BooksController {
       },
     }),
   }))
-  async update(
-    @Param('id') id: string,
-    @Body() bookDto: BookDto,
-    @UploadedFile() file?: Express.Multer.File
-  ): Promise<BookDto> {
-    let imageUrl;
-    if (file) {
-      imageUrl = `/uploads/${file.filename}`;
-    }
-    
-    if (imageUrl) {
-      bookDto.imageUrl = imageUrl;
-    }
-
-    return this.booksService.update(id, bookDto);
+  async uploadImage(@Param('id') bookId: string, @UploadedFile() file: Express.Multer.File): Promise<BookDto> {
+    const imageUrl = `/uploads/${file.filename}`;
+    return this.booksService.updateImageUrl(bookId, imageUrl);
   }
 
 }
