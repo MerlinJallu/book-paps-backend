@@ -16,14 +16,13 @@ import { IBook } from '../book.interface';
 import { BookDto } from '../dto/book.dto';
 import { CloudinaryService } from './cloudinary.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 import { extname } from 'path';
 
 @Controller('books')
 export class BooksController {
   constructor(
     private readonly booksService: BooksService,
-    //private readonly cloudinaryService: CloudinaryService,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   @Get()
@@ -50,18 +49,9 @@ export class BooksController {
   }
 
   @Post(':id/upload-image')
-  @UseInterceptors(FileInterceptor('image', {
-    storage: diskStorage({
-      destination: './uploads',
-      filename: (_, file, cb) => {
-        const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, `${uniqueName}${extname(file.originalname)}`);
-      },
-    }),
-  }))
+  @UseInterceptors(FileInterceptor('image'))
   async uploadImage(@Param('id') bookId: string, @UploadedFile() file: Express.Multer.File): Promise<BookDto> {
-    const imageUrl = `/uploads/${file.filename}`;
+    const imageUrl = await this.cloudinaryService.uploadImage(file);
     return this.booksService.updateImageUrl(bookId, imageUrl);
   }
-
 }
