@@ -16,13 +16,12 @@ import { IBook } from '../book.interface';
 import { BookDto } from '../dto/book.dto';
 import { CloudinaryService } from './cloudinary.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { extname } from 'path';
 
 @Controller('books')
 export class BooksController {
   constructor(
     private readonly booksService: BooksService,
-    private readonly cloudinaryService: CloudinaryService,
+    // private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   @Get()
@@ -48,10 +47,10 @@ export class BooksController {
     return this.booksService.update(id, bookDto);
   }
 
-  @Post(':id/upload-image')
-  @UseInterceptors(FileInterceptor('image'))
-  async uploadImage(@Param('id') bookId: string, @UploadedFile() file: Express.Multer.File): Promise<BookDto> {
-    const imageUrl = await this.cloudinaryService.uploadImage(file);
-    return this.booksService.updateImageUrl(bookId, imageUrl);
-  }
+  // @Post(':id/upload-image')
+  // @UseInterceptors(FileInterceptor('image'))
+  // async uploadImage(@Param('id') bookId: string, @UploadedFile() file: Express.Multer.File): Promise<BookDto> {
+  //   const imageUrl = await this.cloudinaryService.uploadImage(file);
+  //   return this.booksService.updateImageUrl(bookId, imageUrl);
+  // }
 }
