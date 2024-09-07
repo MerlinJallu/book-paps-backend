@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { Book, BookDocument } from '../book.shema';
 import { CreateBookDto } from '../dto/create-book.dto';
 import { BookDto } from '../dto/book.dto';
+import { NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class BooksService {
@@ -65,6 +66,7 @@ export class BooksService {
     const updatedBook = await this.bookModel.findByIdAndUpdate(id, bookDto, {
       new: true,
     });
+
     return {
       id: updatedBook._id.toString(),
       title: updatedBook.title,
@@ -91,6 +93,28 @@ export class BooksService {
       price: book.price,
       imageUrl: book.imageUrl,
     };
+  }
+
+  async findOne(id: string): Promise<BookDto> {
+    const book = await this.bookModel.findById(id).exec();
+    if (!book) {
+        throw new NotFoundException(`Book with ID ${id} not found`);
+    }
+    return {
+        id: book._id.toString(),
+        title: book.title,
+        description: book.description,
+        category: book.category,
+        date: book.date,
+        author: book.author,
+        edition: book.edition,
+        price: book.price,
+        imageUrl: book.imageUrl,
+    };
+  }
+
+  async updateBookImageUrl(bookId: string, imageUrl: string): Promise<Book> {
+    return this.bookModel.findByIdAndUpdate(bookId, { imageUrl }, { new: true });
   }
   
 }

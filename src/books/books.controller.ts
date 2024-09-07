@@ -6,27 +6,31 @@ import {
   Param,
   Post,
   Put,
-  UseInterceptors,
-  UploadedFile,
-  Req,
+  UseInterceptors, UploadedFile, BadRequestException, InternalServerErrorException
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from '../dto/create-book.dto';
 import { IBook } from '../book.interface';
 import { BookDto } from '../dto/book.dto';
-import { CloudinaryService } from './cloudinary.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { CloudinaryService } from '../cloudinary.service';
+import { v2 as cloudinary } from 'cloudinary';
 
 @Controller('books')
 export class BooksController {
   constructor(
     private readonly booksService: BooksService,
-    // private readonly cloudinaryService: CloudinaryService,
+    private readonly cloudinaryService: CloudinaryService
   ) {}
 
   @Get()
   findAll(): Promise<BookDto[]> {
     return this.booksService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string): Promise<BookDto> {
+    return this.booksService.findOne(id);
   }
 
   @Post()
@@ -47,10 +51,20 @@ export class BooksController {
     return this.booksService.update(id, bookDto);
   }
 
-  // @Post(':id/upload-image')
-  // @UseInterceptors(FileInterceptor('image'))
-  // async uploadImage(@Param('id') bookId: string, @UploadedFile() file: Express.Multer.File): Promise<BookDto> {
-  //   const imageUrl = await this.cloudinaryService.uploadImage(file);
-  //   return this.booksService.updateImageUrl(bookId, imageUrl);
-  // }
+  @Post(':id/upload-image')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadBookImage(
+    @Param('id') bookId: string,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<IBook> {
+    try {
+      const uploadResult = await this.cloudinaryService.uploadImage(file);
+      const updatedBook = await this.booksService.updateBookImageUrl(bookId, uploadResult.secure_url);
+      return updatedBook;
+    } catch (error) {
+      console.error('Erreur lors de l\'upload de l\'image:', error);
+      throw new Error('Erreur lors de l\'upload de l\'image');
+    }
+  }
+
 }
