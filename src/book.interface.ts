@@ -9,4 +9,6 @@ export interface IBook {
   edition?: string;
   price?: number;
   imageUrl?: string;
+  state?: string;
+  collectionSlug?: string;
 }

@@ -13,6 +13,26 @@ export class CloudinaryService {
   }
 
   async uploadImage(file: Express.Multer.File): Promise<UploadApiResponse> {
-    return cloudinary.uploader.upload(file.path);
+    if (file.path) {
+      return cloudinary.uploader.upload(file.path);
+    }
+
+    return new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream((error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+
+        if (!result) {
+          reject(new Error('Cloudinary upload did not return a result'));
+          return;
+        }
+
+        resolve(result);
+      });
+
+      uploadStream.end(file.buffer);
+    });
   }
 }

@@ -28,6 +28,12 @@ export class Book {
 
   @Prop()
   imageUrl: string;
+
+  @Prop()
+  state?: string;
+
+  @Prop()
+  collectionSlug?: string;
 }
 
 export const BookSchema = SchemaFactory.createForClass(Book);

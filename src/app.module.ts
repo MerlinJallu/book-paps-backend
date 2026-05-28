@@ -8,6 +8,8 @@ import { AppService } from './app.service';
 import { BooksModule } from './books/books.module';
 import { ConfigModule } from '@nestjs/config';
 
+console.log('MONGODB_URI loaded:', !!process.env.MONGODB_URI);
+
 @Module({
   imports: [
     MongooseModule.forRoot(process.env.MONGODB_URI),
