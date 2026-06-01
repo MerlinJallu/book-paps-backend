@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import { Book, BookDocument } from '../book.shema';
 import { Collection, CollectionDocument } from '../collection.schema';
 import { CreateCollectionDto } from '../dto/create-collection.dto';
@@ -146,26 +146,42 @@ export class CollectionsService {
   }
 
   private async countBooksByCollectionSlugs(slugs: string[]): Promise<Map<string, number>> {
-    const collectionSlugs = slugs.map(normalizeCollectionSlug).filter(Boolean);
+    const collectionSlugs = Array.from(new Set(slugs.map(normalizeCollectionSlug).filter(Boolean)));
 
     if (!collectionSlugs.length) {
       return new Map();
     }
 
-    const counts = await this.bookModel
-      .aggregate<{ _id: string; count: number }>([
-        { $match: { collectionSlug: { $in: collectionSlugs } } },
-        { $group: { _id: '$collectionSlug', count: { $sum: 1 } } },
-      ])
-      .exec();
+    const counts = await Promise.all(
+      collectionSlugs.map(async (slug) => [
+        slug,
+        await this.countBooksByCollectionSlug(slug),
+      ] as const),
+    );
 
-    return new Map(counts.map((count) => [count._id, count.count]));
+    return new Map(counts);
   }
 
   private countBooksByCollectionSlug(slug: string): Promise<number> {
     return this.bookModel
-      .countDocuments({ collectionSlug: normalizeCollectionSlug(slug) })
+      .countDocuments(this.getBooksByCollectionSlugFilter(normalizeCollectionSlug(slug)))
       .exec();
+  }
+
+  private getBooksByCollectionSlugFilter(slug: string): FilterQuery<BookDocument> {
+    if (slug !== PROTECTED_COLLECTION_SLUG) {
+      return { collectionSlug: slug };
+    }
+
+    return {
+      $or: [
+        { collectionSlug: PROTECTED_COLLECTION_SLUG },
+        { collectionSlug: { $exists: false } },
+        { collectionSlug: null },
+        { collectionSlug: '' },
+        { collectionSlug: { $regex: /^\s+$/ } },
+      ],
+    };
   }
 
   private toResponse(collection: CollectionDocument, itemCount?: number): CollectionResponse {
