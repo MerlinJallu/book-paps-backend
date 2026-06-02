@@ -96,6 +96,9 @@ export class SupportMessageService {
   private assertRateLimit(clientIp: string): void {
     const now = Date.now();
     const key = clientIp || 'unknown';
+
+    this.pruneExpiredRateLimitBuckets(now);
+
     const currentBucket = this.rateLimitBuckets.get(key);
 
     if (!currentBucket || now - currentBucket.windowStart >= RATE_LIMIT_WINDOW_MS) {
@@ -114,6 +117,14 @@ export class SupportMessageService {
     }
 
     currentBucket.count += 1;
+  }
+
+  private pruneExpiredRateLimitBuckets(now: number): void {
+    for (const [key, bucket] of this.rateLimitBuckets.entries()) {
+      if (now - bucket.windowStart >= RATE_LIMIT_WINDOW_MS) {
+        this.rateLimitBuckets.delete(key);
+      }
+    }
   }
 
   private readSmtpConfig(): SmtpConfig {

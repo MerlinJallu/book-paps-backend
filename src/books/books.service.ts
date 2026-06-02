@@ -123,6 +123,7 @@ export class BooksService {
   }
 
   async findOne(id: string): Promise<BookDto> {
+    this.validateBookId(id);
     const book = await this.bookModel.findById(id).exec();
     if (!book) {
         throw new NotFoundException(`Book with ID ${id} not found`);
